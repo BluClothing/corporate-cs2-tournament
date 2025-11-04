@@ -8,11 +8,10 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-6">
 
-<h1 class="text-3xl font-bold mb-4">БагЫӨЫӨЫБӨЫБӨ ЫӨБЫБӨ м</h1>
+<h1 class="text-3xl font-bold mb-4">Баг бүртгэлийн форм</h1>
 
 <form id="regForm" class="w-full max-w-3xl bg-gray-800 p-6 rounded-lg space-y-6">
 
-  <!-- Компани -->
   <div>
     <label class="block mb-1 text-gray-300">Компани нэр</label>
     <input type="text" name="company" required class="w-full p-2 rounded bg-gray-700">
@@ -35,70 +34,62 @@
 </form>
 
 <script>
-  // ✅ Web App URL-г оруул
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznwY1567XOQonTWYpo_-aviGeANL-TtvfT8TrsUtVmE_F9qj3X5fHljTMJYZR70HZx/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdNCYhvUUqxu5b0ZqWIMb5ag86cvIcSdUOGlEKKqfky5fLg60ymH7LzC1GPCXol2p-TQ/exec"; // Web App URL-г соль
 
-  const playersContainer = document.getElementById("players");
-  const roles = ["Тоглогч 1", "Тоглогч 2", "Тоглогч 3", "Тоглогч 4", "Тоглогч 5", "Сэлгээ"];
+const playersContainer = document.getElementById("players");
+const roles = ["Тоглогч 1", "Тоглогч 2", "Тоглогч 3", "Тоглогч 4", "Тоглогч 5", "Сэлгээ"];
 
-  roles.forEach((r, i) => {
-    playersContainer.innerHTML += `
-      <div class="border border-gray-700 p-4 rounded">
-        <h3 class="font-semibold mb-2">${r}</h3>
-        <input name="player${i}_fullName" placeholder="Овог нэр" class="w-full mb-2 p-2 rounded bg-gray-700">
-        <input name="player${i}_nick" placeholder="Никнейм" class="w-full mb-2 p-2 rounded bg-gray-700">
-        <input name="player${i}_steam" placeholder="Steam ID" class="w-full mb-2 p-2 rounded bg-gray-700">
-        <input name="player${i}_phone" placeholder="Утасны дугаар" class="w-full mb-2 p-2 rounded bg-gray-700">
-        <input name="player${i}_work" placeholder="Ажилласан хугацаа (сар)" class="w-full mb-2 p-2 rounded bg-gray-700">
-        <input name="player${i}_photo" placeholder="Цээж зураг линк (URL)" class="w-full mb-2 p-2 rounded bg-gray-700">
-      </div>`;
-  });
+roles.forEach((r, i) => {
+  playersContainer.innerHTML += `
+    <div class="border border-gray-700 p-4 rounded">
+      <h3 class="font-semibold mb-2">${r}</h3>
+      <input name="player${i}_fullName" placeholder="Овог нэр" class="w-full mb-2 p-2 rounded bg-gray-700">
+      <input name="player${i}_nick" placeholder="Никнейм" class="w-full mb-2 p-2 rounded bg-gray-700">
+      <input name="player${i}_steam" placeholder="Steam ID" class="w-full mb-2 p-2 rounded bg-gray-700">
+      <input name="player${i}_phone" placeholder="Утасны дугаар" class="w-full mb-2 p-2 rounded bg-gray-700">
+      <input name="player${i}_work" placeholder="Ажилласан хугацаа (сар)" class="w-full mb-2 p-2 rounded bg-gray-700">
+      <input name="player${i}_photo" placeholder="Цээж зураг линк (URL)" class="w-full mb-2 p-2 rounded bg-gray-700">
+    </div>`;
+});
 
-  document.getElementById("regForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const data = {
-      company: fd.get("company"),
-      logo: fd.get("logo"),
-      teamName: fd.get("teamName"),
-      players: []
-    };
+document.getElementById("regForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = { company: fd.get("company"), logo: fd.get("logo"), teamName: fd.get("teamName"), players: [] };
 
-    for(let i=0;i<5;i++){
-      data.players.push({
-        fullName: fd.get(`player${i}_fullName`),
-        nick: fd.get(`player${i}_nick`),
-        steam: fd.get(`player${i}_steam`),
-        phone: fd.get(`player${i}_phone`),
-        work: fd.get(`player${i}_work`),
-        photo: fd.get(`player${i}_photo`)
-      });
-    }
+  for(let i=0;i<5;i++){
+    data.players.push({
+      fullName: fd.get(`player${i}_fullName`),
+      nick: fd.get(`player${i}_nick`),
+      steam: fd.get(`player${i}_steam`),
+      phone: fd.get(`player${i}_phone`),
+      work: fd.get(`player${i}_work`),
+      photo: fd.get(`player${i}_photo`)
+    });
+  }
 
-    // Сэлгээ
-    data.sub = {
-      fullName: fd.get(`player5_fullName`),
-      nick: fd.get(`player5_nick`),
-      steam: fd.get(`player5_steam`),
-      phone: fd.get(`player5_phone`),
-      work: fd.get(`player5_work`),
-      photo: fd.get(`player5_photo`)
-    };
+  data.sub = {
+    fullName: fd.get(`player5_fullName`),
+    nick: fd.get(`player5_nick`),
+    steam: fd.get(`player5_steam`),
+    phone: fd.get(`player5_phone`),
+    work: fd.get(`player5_work`),
+    photo: fd.get(`player5_photo`)
+  };
 
-    try {
-      const response = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.json().catch(()=>({status:"success"}));
-      alert(result.status==="success"?"Бүртгэл амжилттай!":"Алдаа гарлаа: "+result.message);
-      e.target.reset();
-    } catch(err) {
-      alert("Алдаа гарлаа: " + err);
-    }
-  });
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    const result = await response.json().catch(()=>({status:"success"}));
+    alert(result.status==="success"?"Бүртгэл амжилттай!":"Алдаа гарлаа: "+result.message);
+    e.target.reset();
+  } catch(err) {
+    alert("Алдаа гарлаа: " + err);
+  }
+});
 </script>
 
 </body>
