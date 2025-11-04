@@ -35,9 +35,8 @@
   </form>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/___YOUR_SCRIPT_URL_HERE___/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/___YOUR_SCRIPT_URL_HERE___/exec"; // Өөрийн Web App URL оруул
 
-    // 5 үндсэн + 1 сэлгээ
     const playersContainer = document.getElementById("players");
     const roles = ["Тоглогч 1", "Тоглогч 2", "Тоглогч 3", "Тоглогч 4", "Тоглогч 5", "Сэлгээ"];
     roles.forEach((r, i) => {
@@ -81,13 +80,15 @@
         photo: fd.get(`player5_photo`)
       };
 
-      await fetch(SCRIPT_URL, {
+      const response = await fetch(SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
 
-      alert("Бүртгэл амжилттай илгээгдлээ!");
+      const result = await response.json().catch(() => ({status:"success"}));
+
+      alert(result.status === "success" ? "Бүртгэл амжилттай!" : "Алдаа гарлаа: " + result.message);
       e.target.reset();
     });
   </script>
